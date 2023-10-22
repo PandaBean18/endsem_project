@@ -45,10 +45,30 @@ int valid_input(char str[])
         }
     }
 
+    if ((count_alpha == 0) || (count_num == 0)) {
+        return 0;
+    }
+
     return 1;
 }
 
-int *convert_input_to_coordinates(char inp[], int coords[2]) 
+char* turnicate_whitespace(char inp[], char trimmed_inp[2])
+{
+    char alpha[] = "abcdefgh";
+    char num[] = "12345678";
+
+    for(0; *inp != '\0'; inp++) {
+        if (includes(alpha, *inp)) {
+            trimmed_inp[0] = *inp;
+        } else if (includes(num, *inp)) {
+            trimmed_inp[1] = *inp;
+        }
+    }
+
+    return trimmed_inp;
+}
+
+int* convert_input_to_coordinates(char inp[], int coords[2]) 
 {
 
     char alpha[] = "abcdefgh";
