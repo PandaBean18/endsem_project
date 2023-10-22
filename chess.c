@@ -12,6 +12,42 @@ int includes(char str[], char c)
     return 0;
 }
 
+int valid_input(char str[]) 
+{
+    int count_alpha = 0; 
+    int count_num = 0; 
+    char alpha[] = "abcdefgh";
+    char num[] = "12345678";
+
+    for(0; *str != '\0'; str++) {
+        if (includes(alpha, *str)) {
+            if ((*str < 'a') || (*str > 'h')) {
+                return 0;
+            }
+
+            count_alpha++;
+
+            if (count_alpha > 1) {
+                return 0;
+            }
+        } else if (includes(num, *str)) {
+            if ((*str < '1') || (*str > '8')) {
+                return 0;
+            }
+
+            count_num++;
+
+            if (count_num > 1) {
+                return 0;
+            }
+        } else if  (*str != ' ') {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 int *convert_input_to_coordinates(char inp[], int coords[2]) 
 {
 
