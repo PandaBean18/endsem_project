@@ -12,6 +12,18 @@ int includes(char str[], char c)
     return 0;
 }
 
+int check_string_equality(char str_1[], char str_2[]) 
+{
+    for (1; *str_1 != '\0'; 1) {
+        if (*str_1 != *str_2) {
+            return 0;
+        } 
+        str_1++;
+        str_2++;
+    }
+    return 1;
+}
+
 int valid_input(char str[]) 
 {
     int count_alpha = 0; 
@@ -86,16 +98,11 @@ int* convert_input_to_coordinates(char inp[], int coords[2])
     return coords;
 }
 
-int check_string_equality(char str_1[], char str_2[]) 
+void move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
 {
-    for (1; *str_1 != '\0'; 1) {
-        if (*str_1 != *str_2) {
-            return 0;
-        } 
-        str_1++;
-        str_2++;
-    }
-    return 1;
+    char* temp = board[(initial_pos[0]*8)+initial_pos[1]];
+    board[(initial_pos[0]*8)+initial_pos[1]] = board[(final_pos[0]*8)+final_pos[1]];
+    board[(final_pos[0]*8)+final_pos[1]] = temp;
 }
 
 int is_white(char str[])
@@ -175,6 +182,36 @@ int main()
         w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn,
         w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook
     };
+    print_board(board);
+
+    char initial_pos_inp[4];
+    char final_pos_inp[4]; 
+    char initial_pos[2];
+    char final_pos[2];
+    int initial_coords[2];
+    int final_coords[2];
+
+    printf("Please enter the position of the piece: "); 
+    gets(&initial_pos_inp);
+
+    if (!valid_input(initial_pos_inp)) {
+        printf("%s is not valid input.", initial_pos_inp);
+    } else {
+        turnicate_whitespace(initial_pos_inp, initial_pos);
+        convert_input_to_coordinates(initial_pos, initial_coords);
+    }
+
+    printf("Please enter the position to which you wish to move the piece: "); 
+    gets(&final_pos_inp);
+
+    if (!valid_input(final_pos_inp)) {
+        printf("%s is not valid input.", final_pos_inp);
+    } else {
+        turnicate_whitespace(final_pos_inp, final_pos);
+        convert_input_to_coordinates(final_pos, final_coords);
+    }
+
+    move_piece(board, initial_coords, final_coords);
     print_board(board);
 
     return 0;
