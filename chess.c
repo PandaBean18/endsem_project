@@ -98,6 +98,21 @@ int* convert_input_to_coordinates(char inp[], int coords[2])
     return coords;
 }
 
+char* find_piece_type(char* piece, char* type) 
+{
+    char* piece_unicodes[] = {"\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659", "\u265A", "\u265B", "\u265C", "\u265D", "\u265E", "\u265F"};
+    char* piece_names[] = {"w_king", "w_queen", "w_rook", "w_bishop", "w_knight", "w_pawn", "b_king", "b_queen", "b_rook", "b_bishop", "b_knight", "b_pawn"};
+
+    for(int i = 0; i < 12; i++) {
+        if (check_string_equality(piece_unicodes[i], piece)) {
+            type = (piece_names[i]);
+            break;
+        }
+    }
+
+    return type;
+}
+
 void move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
 {
     char* temp = board[(initial_pos[0]*8)+initial_pos[1]];
