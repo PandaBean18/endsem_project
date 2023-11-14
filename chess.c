@@ -64,7 +64,7 @@ int valid_input(char str[])
     return 1;
 }
 
-char* turnicate_whitespace(char inp[], char trimmed_inp[2])
+char* turnicate_whitespace(char inp[], char trimmed_inp[3])
 {
     char alpha[] = "abcdefgh";
     char num[] = "12345678";
@@ -76,7 +76,7 @@ char* turnicate_whitespace(char inp[], char trimmed_inp[2])
             trimmed_inp[1] = *inp;
         }
     }
-
+    trimmed_inp[2] = '\0';
     return trimmed_inp;
 }
 
@@ -137,6 +137,7 @@ char* find_piece_type(char* piece, char* type)
 
 int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2])
 {
+
     int piece[2] = {*(piece_ptr++), *piece_ptr};
     char piece_type[10];
     find_piece_type(board[(piece[0] * 8) + piece[1]], piece_type);
@@ -151,15 +152,16 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             int diag_pos_1 = ((piece[0]) - 1) * 8 + (piece[1] + 1);
             int diag_pos_2 = ((piece[0]) - 1) * 8 + (piece[1] - 1);
 
-            if ((((piece[1]) + 1) >= 0 && ((piece[1]) + 1) < 8) && (*(board[diag_pos_1]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_1])))) {
-                positions[2][0] = (piece[0]) - 1;
-                positions[2][1] = (piece[1] + 1);
+            if ((((piece[1]) + 1) >= 0 && ((piece[1]) + 1) < 8) && (*(board[diag_pos_1]) != ' ') && (is_white((board[(piece[0] * 8) + piece[1]])) ^ is_white((board[diag_pos_1])))) {
+                positions[positions_end_count][0] = (piece[0]) - 1;
+                positions[positions_end_count][1] = (piece[1] + 1);
                 positions_end_count++;
             }
 
-            if ((((piece[1]) - 1) >= 0 && ((piece[1]) - 1) < 8) && (*(board[diag_pos_2]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_2])))) {
-                positions[3][0] = (piece[0]) - 1;
-                positions[3][1] = (piece[1] - 1);
+            if ((((piece[1]) - 1) >= 0 && ((piece[1]) - 1) < 8) && (*(board[diag_pos_2]) != ' ') && (is_white((board[(piece[0] * 8) + piece[1]])) ^ is_white((board[diag_pos_2])))) {
+                printf("a\n");
+                positions[positions_end_count][0] = (piece[0]) - 1;
+                positions[positions_end_count][1] = (piece[1] - 1);
                 positions_end_count++;
             }
 
@@ -186,18 +188,19 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             positions[0][1] = piece[1];
             positions[1][0] = (piece[0] + 2);
             positions[1][1] = piece[1];
-            int positions_end_count = 2;
 
+            int positions_end_count = 2;
             int diag_pos_1 = (((piece[0] + 1) * 8) + (piece[1] + 1));
             int diag_pos_2 = (((piece[0] + 1) * 8) + (piece[1] - 1));
 
-            if ((((piece[1] + 1) >= 0) && ((piece[1] + 1) < 8)) && (*(board[diag_pos_1]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_1])))) {
+            if ((((piece[1] + 1) >= 0) && ((piece[1] + 1) < 8)) && (*(board[diag_pos_1]) != ' ') && (is_white((board[(piece[0] * 8) + piece[1]])) ^ is_white((board[diag_pos_1]))))
+            {
                 positions[positions_end_count][0] = piece[0] + 1;
                 positions[positions_end_count][1] = piece[1] + 1;
                 positions_end_count++;
             }
 
-            if ((((piece[1]) - 1) >= 0 && ((piece[1]) - 1) < 8) && (*(board[diag_pos_2]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_2])))) {
+            if ((((piece[1]) - 1) >= 0 && ((piece[1]) - 1) < 8) && (*(board[diag_pos_2]) != ' ') && (is_white((board[(piece[0] * 8) + piece[1]])) ^ is_white((board[diag_pos_2])))) {
                 positions[positions_end_count][0] = piece[0] + 1;
                 positions[positions_end_count][1] = piece[1] - 1;
                 positions_end_count++;
@@ -297,10 +300,31 @@ int main()
     };
 
     print_board(board);
+    char inp_initial[10];
+    char inp_final[10];
+    char initial[3];
+    char final[3];
+    int coords_initial[2];
+    int coords_final[2];
+    fflush(stdin);
+    printf("Please enter the position of the piece you wish to move: ");
+    gets(&inp_initial);
 
+    fflush(stdin);
+    printf("Please enter the position to which you want to move to: ");
+    gets(&inp_final);
+
+
+    convert_input_to_coordinates(turnicate_whitespace(inp_initial, initial), coords_initial);
+    convert_input_to_coordinates(turnicate_whitespace(inp_final, final), coords_final);
+    move_piece(board, coords_initial, coords_final);
+    print_board(board);
+
+
+    int a[2] = {6, 1};
     int positions[63][2] = {{1, 1}, {-1, -1}};
-    int piece[2] = {6, 0};
-    find_possible_moves(board, piece, positions);
+    find_possible_moves(board, a, positions);
+    
 
     for (int i = 0; i != 10; i++)
     {
