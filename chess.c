@@ -224,9 +224,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             }
         }
 
-    }
-    else if ((check_string_equality(piece_type, "w_rook")) || (check_string_equality(piece_type, "b_rook")))
-    {
+    } else if ((check_string_equality(piece_type, "w_rook")) || (check_string_equality(piece_type, "b_rook"))) {
         int positions_count = 0;
 
         for(int i = 0; i < 8; i++) {
@@ -243,6 +241,49 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
 
         positions[positions_count][0] = -1; 
         positions[positions_count][1] = -1; 
+        return positions;
+    } else if (check_string_equality(piece_type, "w_bishop") || check_string_equality(piece_type, "b_bishop")) {
+        int positions_count = 0;
+        printf("1\n");
+        int i = 0;
+
+        while (((piece[0] + i) < 8) && (piece[1] + i) < 8) {
+            positions[positions_count][0] = piece[0] + i;
+            positions[positions_count][1] = piece[1] + i;
+            positions_count++;
+            i++;
+        }
+
+        i = 0;
+
+        while (((piece[0] + i) < 8) && ((piece[1] - i) >= 0)) {
+            positions[positions_count][0] = piece[0] + i;
+            positions[positions_count][1] = piece[1] - i;
+            positions_count++;
+            i++;
+        }
+
+        i = 0;
+
+        while (((piece[0] - i) >= 0) && ((piece[1] - i) >= 0)) {
+            positions[positions_count][0] = piece[0] - i;
+            positions[positions_count][1] = piece[1] - i;
+            positions_count++;
+            i++;
+        }
+
+        i = 0;
+
+        while (((piece[0] - i) >= 0) && ((piece[1] + i) < 8))
+        {
+            positions[positions_count][0] = piece[0] - i;
+            positions[positions_count][1] = piece[1] + i;
+            positions_count++;
+            i++;
+        }
+
+        positions[positions_count][0] = -1;
+        positions[positions_count][1] = -1;
         return positions;
     }
 }
@@ -341,7 +382,7 @@ int main()
     print_board(board);
 
 
-    int a[2] = {3, 3};
+    int a[2] = {3, 2};
     int positions[63][2] = {{-1, -1}};
     find_possible_moves(board, a, positions);
     
