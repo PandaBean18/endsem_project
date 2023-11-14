@@ -225,6 +225,26 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
         }
 
     }
+    else if ((check_string_equality(piece_type, "w_rook")) || (check_string_equality(piece_type, "b_rook")))
+    {
+        int positions_count = 0;
+
+        for(int i = 0; i < 8; i++) {
+            positions[positions_count][0] = i; 
+            positions[positions_count][1] = piece[1];
+            positions_count++;
+        }
+
+        for(int i = 0; i < 8; i++) {
+            positions[positions_count][0] = piece[0];
+            positions[positions_count][1] = i;
+            positions_count++;
+        }
+
+        positions[positions_count][0] = -1; 
+        positions[positions_count][1] = -1; 
+        return positions;
+    }
 }
 
 void move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
@@ -321,12 +341,12 @@ int main()
     print_board(board);
 
 
-    int a[2] = {6, 1};
-    int positions[63][2] = {{1, 1}, {-1, -1}};
+    int a[2] = {3, 3};
+    int positions[63][2] = {{-1, -1}};
     find_possible_moves(board, a, positions);
     
 
-    for (int i = 0; i != 10; i++)
+    for (int i = 0; positions[i][0] != -1; i++)
     {
         printf("%d, %d\n", positions[i][0], positions[i][1]);
     }
