@@ -244,7 +244,6 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
         return positions;
     } else if (check_string_equality(piece_type, "w_bishop") || check_string_equality(piece_type, "b_bishop")) {
         int positions_count = 0;
-        printf("1\n");
         int i = 0;
 
         while (((piece[0] + i) < 8) && (piece[1] + i) < 8) {
@@ -266,6 +265,64 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
         i = 0;
 
         while (((piece[0] - i) >= 0) && ((piece[1] - i) >= 0)) {
+            positions[positions_count][0] = piece[0] - i;
+            positions[positions_count][1] = piece[1] - i;
+            positions_count++;
+            i++;
+        }
+
+        i = 0;
+
+        while (((piece[0] - i) >= 0) && ((piece[1] + i) < 8))
+        {
+            positions[positions_count][0] = piece[0] - i;
+            positions[positions_count][1] = piece[1] + i;
+            positions_count++;
+            i++;
+        }
+
+        positions[positions_count][0] = -1;
+        positions[positions_count][1] = -1;
+        return positions;
+    } else if (check_string_equality(piece_type, "w_queen") || check_string_equality(piece_type, "b_queen")) {
+        int positions_count = 0;
+
+        for(int i = 0; i < 8; i++) {
+            positions[positions_count][0] = i;
+            positions[positions_count][1] = piece[1];
+            positions_count++;
+        }
+
+        for(int i = 0; i < 8; i++) {
+            positions[positions_count][0] = piece[0];
+            positions[positions_count][1] = i;
+            positions_count++;
+        }
+
+        int i = 0;
+
+        while (((piece[0] + i) < 8) && (piece[1] + i) < 8)
+        {
+            positions[positions_count][0] = piece[0] + i;
+            positions[positions_count][1] = piece[1] + i;
+            positions_count++;
+            i++;
+        }
+
+        i = 0;
+
+        while (((piece[0] + i) < 8) && ((piece[1] - i) >= 0))
+        {
+            positions[positions_count][0] = piece[0] + i;
+            positions[positions_count][1] = piece[1] - i;
+            positions_count++;
+            i++;
+        }
+
+        i = 0;
+
+        while (((piece[0] - i) >= 0) && ((piece[1] - i) >= 0))
+        {
             positions[positions_count][0] = piece[0] - i;
             positions[positions_count][1] = piece[1] - i;
             positions_count++;
