@@ -376,6 +376,77 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
         positions[positions_count][0] = -1;
         positions[positions_count][1] = -1;
         return positions;
+    } else if (check_string_equality(piece_type, "w_king") || check_string_equality(piece_type, "b_king")) {
+        int positions_count = 0;
+        int piece_pos = (piece[0] * 8) + piece[1];
+        int piece_color = is_white(board[piece_pos]);
+        if ((piece[0] + 1) < 8) {
+            if ((*(board[((piece[0] + 1) * 8) + piece[1]]) == ' ') || (piece_color ^ is_white(board[((piece[0] + 1) * 8) + piece[1]])))
+            {
+                positions[positions_count][0] = piece[0] + 1;
+                positions[positions_count][1] = piece[1];
+                positions++;
+            }
+
+            if (((piece[1] + 1) < 8) && ((*(board[((piece[0] + 1) * 8) + piece[1] + 1]) == ' ') || (piece_color ^ is_white(board[((piece[0] + 1) * 8) + piece[1] + 1]))))
+            {
+                positions[positions_count][0] = piece[0] + 1;
+                positions[positions_count][1] = piece[1] + 1;
+                positions++;
+            }
+
+            if (((piece[1] - 1) >= 0) && ((*(board[((piece[0] + 1) * 8) + piece[1] - 1]) == ' ') || (piece_color ^ is_white(board[((piece[0] + 1) * 8) + piece[1] - 1]))))
+            {
+                positions[positions_count][0] = piece[0] + 1;
+                positions[positions_count][1] = piece[1] - 1;
+                positions++;
+            }
+        } 
+        
+        if ((piece[0] - 1) >= 0) {
+            if ((*(board[((piece[0] - 1) * 8) + piece[1]]) == ' ') || (piece_color ^ is_white(board[((piece[0] - 1) * 8) + piece[1]])))
+            {
+                positions[positions_count][0] = piece[0] - 1;
+                positions[positions_count][1] = piece[1];
+                positions++;
+            }
+
+            if (((piece[1] + 1) < 8) && ((*(board[((piece[0] - 1) * 8) + piece[1] + 1]) == ' ') || (piece_color ^ is_white(board[((piece[0] - 1) * 8) + piece[1] + 1]))))
+            {
+                positions[positions_count][0] = piece[0] - 1;
+                positions[positions_count][1] = piece[1] + 1;
+                positions++;
+            }
+
+            if (((piece[1] - 1) >= 0) && ((*(board[((piece[0] - 1) * 8) + piece[1] - 1]) == ' ') || (piece_color ^ is_white(board[((piece[0] - 1) * 8) + piece[1] - 1]))))
+            {
+                positions[positions_count][0] = piece[0] - 1;
+                positions[positions_count][1] = piece[1] - 1;
+                positions++;
+            }
+        }
+
+        if ((piece[1] + 1) < 8) {
+            if ((*(board[(piece[0] * 8) + piece[1] + 1]) == ' ') || (piece_color ^ is_white(board[(piece[0] * 8) + piece[1] + 1])))
+            {
+                positions[positions_count][0] = piece[0];
+                positions[positions_count][1] = piece[1] + 1;
+                positions_count++;
+            }
+        }
+
+        if ((piece[1] - 1) >= 0) {
+            if ((*(board[(piece[0] * 8) + piece[1] - 1]) == ' ') || (piece_color ^ is_white(board[(piece[0] * 8) + piece[1] - 1])))
+            {
+                positions[positions_count][0] = piece[0];
+                positions[positions_count][1] = piece[1] - 1;
+                positions_count++;
+            }
+        }
+
+        positions[positions_count][0] = -1;
+        positions[positions_count][1] = -1;
+        return positions;
     }
 }
 
@@ -473,7 +544,7 @@ int main()
     print_board(board);
 
 
-    int a[2] = {3, 2};
+    int a[2] = {2, 2};
     int positions[63][2] = {{-1, -1}};
     find_possible_moves(board, a, positions);
     
