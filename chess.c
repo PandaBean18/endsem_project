@@ -342,6 +342,40 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
         positions[positions_count][0] = -1;
         positions[positions_count][1] = -1;
         return positions;
+    } else if (check_string_equality(piece_type, "w_knight") || check_string_equality(piece_type, "b_knight")) {
+        int positions_count = 0;
+
+        if ((piece[0] + 2) < 8) {
+            if ((piece[1] + 1) < 8) {
+                positions[positions_count][0] = piece[0] + 2;
+                positions[positions_count][1] = piece[1] + 1;
+                positions_count++;
+            }
+
+            if ((piece[1] - 1) >= 0) {
+                positions[positions_count][0] = piece[0] + 2;
+                positions[positions_count][1] = piece[1] - 1;
+                positions_count++;
+            }
+        }
+
+        if ((piece[0] - 2) >= 0) {
+            if ((piece[1] + 1) < 8) {
+                positions[positions_count][0] = piece[0] - 2;
+                positions[positions_count][1] = piece[1] + 1;
+                positions_count++;
+            }
+
+            if ((piece[1] - 1) >= 0) {
+                positions[positions_count][0] = piece[0] - 2;
+                positions[positions_count][1] = piece[1] - 1;
+                positions_count++;
+            }
+        }
+
+        positions[positions_count][0] = -1;
+        positions[positions_count][1] = -1;
+        return positions;
     }
 }
 
