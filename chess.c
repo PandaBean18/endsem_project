@@ -98,6 +98,21 @@ int* convert_input_to_coordinates(char inp[], int coords[2])
     return coords;
 }
 
+int is_white(char str[])
+{
+    char *whites[6] = {"\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659"};
+
+    for (int i = 0; i < 6; i++)
+    {
+        if (check_string_equality(whites[i], str))
+        {
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
 char* find_piece_type(char* piece, char* type) 
 {
     char* piece_unicodes[] = {"\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659", "\u265A", "\u265B", "\u265C", "\u265D", "\u265E", "\u265F"};
@@ -105,7 +120,14 @@ char* find_piece_type(char* piece, char* type)
 
     for(int i = 0; i < 12; i++) {
         if (check_string_equality(piece_unicodes[i], piece)) {
-            type = (piece_names[i]);
+            char *str = piece_names[i];
+            for (1; *str != '\0'; 1)
+            {
+                *type = *str;
+                type++;
+                str++;
+            }
+            *type = '\0';
             break;
         }
     }
@@ -113,24 +135,100 @@ char* find_piece_type(char* piece, char* type)
     return type;
 }
 
+int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2])
+{
+    int piece[2] = {*(piece_ptr++), *piece_ptr};
+    char piece_type[10];
+    find_piece_type(board[(piece[0] * 8) + piece[1]], piece_type);
+    if (check_string_equality(piece_type, "w_pawn")) {
+        if (piece[0] == 6) {
+            positions[0][0] = (piece[0]-1);
+            positions[0][1] = piece[1];
+            positions[1][0] = (piece[0] - 2);
+            positions[1][1] = piece[1];
+            int positions_end_count = 2;
+
+            int diag_pos_1 = ((piece[0]) - 1) * 8 + (piece[1] + 1);
+            int diag_pos_2 = ((piece[0]) - 1) * 8 + (piece[1] - 1);
+
+            if ((((piece[1]) + 1) >= 0 && ((piece[1]) + 1) < 8) && (*(board[diag_pos_1]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_1])))) {
+                positions[2][0] = (piece[0]) - 1;
+                positions[2][1] = (piece[1] + 1);
+                positions_end_count++;
+            }
+
+            if ((((piece[1]) - 1) >= 0 && ((piece[1]) - 1) < 8) && (*(board[diag_pos_2]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_2])))) {
+                positions[3][0] = (piece[0]) - 1;
+                positions[3][1] = (piece[1] - 1);
+                positions_end_count++;
+            }
+
+            positions[positions_end_count][0] = -1;
+            positions[positions_end_count][1] = -1;
+            return positions;
+        } else {
+            if ((piece[0] - 1) >= 0) {
+                positions[0][0] = piece[0]-1;
+                positions[0][1] = piece[1];
+
+                positions[1][0] = -1;
+                positions[1][1] = -1;
+                return positions;
+            } else {
+                positions[0][0] = -1;
+                positions[0][1] = -1;
+                return positions;
+            }
+        }
+    } else if (check_string_equality(piece_type, "b_pawn")) {
+        if (piece[0] == 1) {
+            positions[0][0] = (piece[0] + 1);
+            positions[0][1] = piece[1];
+            positions[1][0] = (piece[0] + 2);
+            positions[1][1] = piece[1];
+            int positions_end_count = 2;
+
+            int diag_pos_1 = (((piece[0] + 1) * 8) + (piece[1] + 1));
+            int diag_pos_2 = (((piece[0] + 1) * 8) + (piece[1] - 1));
+
+            if ((((piece[1] + 1) >= 0) && ((piece[1] + 1) < 8)) && (*(board[diag_pos_1]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_1])))) {
+                positions[positions_end_count][0] = piece[0] + 1;
+                positions[positions_end_count][1] = piece[1] + 1;
+                positions_end_count++;
+            }
+
+            if ((((piece[1]) - 1) >= 0 && ((piece[1]) - 1) < 8) && (*(board[diag_pos_2]) != ' ') && (is_white(*(board[(piece[0] * 8) + piece[1]])) ^ is_white(*(board[diag_pos_2])))) {
+                positions[positions_end_count][0] = piece[0] + 1;
+                positions[positions_end_count][1] = piece[1] - 1;
+                positions_end_count++;
+            }
+
+            positions[positions_end_count][0] = -1;
+            positions[positions_end_count][1] = -1;
+            return positions;
+        } else {
+            if ((piece[0] + 1) < 8) {
+                positions[0][0] = piece[0] + 1; 
+                positions[0][1] = piece[1];
+
+                positions[1][0] = -1;
+                positions[1][1] = -1;
+                return positions;
+            } else {
+                positions[0][0] = -1;
+                positions[0][1] = -1;
+                return positions;
+            }
+        }
+
+    }
+}
+
 void move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
 {
     char* temp = board[(initial_pos[0]*8)+initial_pos[1]];
     board[(initial_pos[0]*8)+initial_pos[1]] = board[(final_pos[0]*8)+final_pos[1]];
     board[(final_pos[0]*8)+final_pos[1]] = temp;
-}
-
-int is_white(char str[])
-{
-    char *whites[6] = {"\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659"};
-
-    for(int i = 0; i < 6; i++) {
-        if (check_string_equality(whites[i], str)) {
-            return 1;
-        }
-    }
-
-    return 0;
 }
 
 void print_board(char* board[64])
@@ -197,37 +295,16 @@ int main()
         w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn, w_pawn,
         w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook
     };
+
     print_board(board);
 
-    char initial_pos_inp[4];
-    char final_pos_inp[4]; 
-    char initial_pos[2];
-    char final_pos[2];
-    int initial_coords[2];
-    int final_coords[2];
+    int positions[63][2] = {{1, 1}, {-1, -1}};
+    int piece[2] = {6, 0};
+    find_possible_moves(board, piece, positions);
 
-    printf("Please enter the position of the piece: "); 
-    gets(&initial_pos_inp);
-
-    if (!valid_input(initial_pos_inp)) {
-        printf("%s is not valid input.", initial_pos_inp);
-    } else {
-        turnicate_whitespace(initial_pos_inp, initial_pos);
-        convert_input_to_coordinates(initial_pos, initial_coords);
+    for (int i = 0; i != 10; i++)
+    {
+        printf("%d, %d\n", positions[i][0], positions[i][1]);
     }
-
-    printf("Please enter the position to which you wish to move the piece: "); 
-    gets(&final_pos_inp);
-
-    if (!valid_input(final_pos_inp)) {
-        printf("%s is not valid input.", final_pos_inp);
-    } else {
-        turnicate_whitespace(final_pos_inp, final_pos);
-        convert_input_to_coordinates(final_pos, final_coords);
-    }
-
-    move_piece(board, initial_coords, final_coords);
-    print_board(board);
-
     return 0;
 }

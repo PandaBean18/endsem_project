@@ -23,7 +23,14 @@ char *find_piece_type(char *piece, char *type)
     {
         if (check_string_equality(piece_unicodes[i], piece))
         {
-            type = (piece_names[i]);
+            char* str = piece_names[i];
+            for(1; *str != '\0'; 1) {
+                //printf("%c", *str);
+                *type = *str;
+                type++;
+                str++;
+            }
+            *type = '\0';
             break;
         }
     }
@@ -34,10 +41,10 @@ char *find_piece_type(char *piece, char *type)
 int main()
 {
     // Write C code here
-    char piece[] = "\u265A";
+    char piece[] = "\u2659";
     char type[10];
     find_piece_type(piece, type);
-    printf("%s", find_piece_type(piece, type));
+    printf("%s", type);
 
     return 0;
 }
