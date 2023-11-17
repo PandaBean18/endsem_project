@@ -1,6 +1,7 @@
 #include <windows.h> 
 #include <stdio.h>
 #include <locale.h>
+
 int includes(char str[], char c) 
 {
     for(1; *str != '\0'; str++) {
@@ -667,11 +668,48 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
     }
 }
 
-void move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
+int king_in_check(char* board[64]) // return 0 -> no king in check
+{                                  // return 1 -> white in check
+    char b_king[] = "\u265A";      // return 2 -> black in check
+    char w_king[] = "\u2654";
+    
+    int positions[63][2] = {{-1, -1}};
+
+    for(int i = 0; i < 8; i++) {
+        for(int j = 0; j < 8; j++) {
+            if (*(board[(i * 8) + j]) != ' ') {
+                int piece[] = {i, j};
+                find_possible_moves(board, piece, positions);
+                for(int k = 0; positions[k][0] != -1; k++) {
+                    if (check_string_equality(board[(positions[k][0] * 8) + positions[k][1]], w_king)) {
+                        return 1;
+                    }
+                    else if (check_string_equality(board[(positions[k][0] * 8) + positions[k][1]], b_king)) {
+                        return 2;
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+
+int move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
 {
-    char* temp = board[(initial_pos[0]*8)+initial_pos[1]];
-    board[(initial_pos[0]*8)+initial_pos[1]] = board[(final_pos[0]*8)+final_pos[1]];
-    board[(final_pos[0]*8)+final_pos[1]] = temp;
+    int possible_moves[63][2] = {{-1, -1}}; 
+    find_possible_moves(board, initial_pos, possible_moves);
+
+    for (int i = 0; possible_moves[i][0] != -1; i++) {
+        if ((possible_moves[i][0] == final_pos[0]) && (possible_moves[i][1] == final_pos[1])) {
+            char *temp = board[(initial_pos[0] * 8) + initial_pos[1]];
+            board[(initial_pos[0] * 8) + initial_pos[1]] = board[(final_pos[0] * 8) + final_pos[1]];
+            board[(final_pos[0] * 8) + final_pos[1]] = temp;
+            return 1;
+        } 
+    }
+
+    return 0;
 }
 
 void print_board(char* board[64])
@@ -739,36 +777,37 @@ int main()
         w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook
     };
 
-    print_board(board);
-    char inp_initial[10];
-    char inp_final[10];
-    char initial[3];
-    char final[3];
-    int coords_initial[2];
-    int coords_final[2];
-    fflush(stdin);
-    printf("Please enter the position of the piece you wish to move: ");
-    gets(&inp_initial);
+    char inp_1[3];
+    char inp_2[3];
+    char inp_3[3];
 
-    fflush(stdin);
-    printf("Please enter the position to which you want to move to: ");
-    gets(&inp_final);
+    int coords_1[2];
+    int coords_2[2];
+    int coords_3[2];
 
-
-    convert_input_to_coordinates(turnicate_whitespace(inp_initial, initial), coords_initial);
-    convert_input_to_coordinates(turnicate_whitespace(inp_final, final), coords_final);
-    move_piece(board, coords_initial, coords_final);
     print_board(board);
 
+    // fflush(stdin);
+    // printf("inp_1: ");
+    // gets(&inp_1);
 
-    int a[2] = {7, 6};
-    int positions[63][2] = {{-1, -1}};
-    find_possible_moves(board, a, positions);
-    
+    // fflush(stdin);
+    // printf("inp_2: ");
+    // gets(&inp_2);
 
-    for (int i = 0; positions[i][0] != -1; i++)
-    {
-        printf("%d, %d\n", positions[i][0], positions[i][1]);
-    }
+    // fflush(stdin);
+    // printf("inp_3: ");
+    // gets(&inp_3);
+
+    // convert_input_to_coordinates(inp_1, coords_1);
+    // convert_input_to_coordinates(inp_2, coords_2);
+    // convert_input_to_coordinates(inp_3, coords_3);
+
+    // move_piece(board, coords_1, coords_2);
+    // move_piece(board, coords_3, coords_2);
+
+    // print_board(board);
+    printf("%d", king_in_check(board));
+
     return 0;
 }
