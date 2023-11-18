@@ -105,6 +105,18 @@ int* convert_input_to_coordinates(char inp[], int coords[2])
     return coords;
 }
 
+char* convert_coords_to_input(int coords[2], char* inp)
+{
+    char alpha[] = "abcdefgh";
+    char num[] = "12345678";
+    *inp = alpha[coords[1]];
+    inp++;
+    *inp = num[7 - coords[0]];
+    inp++;
+    *inp = '\0';
+    return inp;
+}
+
 int is_white(char str[])
 {
     char *whites[6] = {"\u2654", "\u2655", "\u2656", "\u2657", "\u2658", "\u2659"};
@@ -815,6 +827,22 @@ void print_board(char* board[64])
     printf("   a  b  c  d  e  f  g  h \n");
 }
 
+int print_rules()
+{
+    printf("Chess Game Rules:\n");
+    printf("1. Each player starts with 16 pieces: 1 king, 1 queen, 2 rooks, 2 knights, 2 bishops, and 8 pawns.\n");
+    printf("2. The board is an 8x8 grid.\n");
+    printf("3. Pieces move according to their specific rules.\n");
+    printf("4. Capture opponent's pieces by moving to their positions.\n");
+    printf("5. The game objective is to checkmate the opponent's king.\n");
+    printf("6. Input moves in the format <column><row>, e.g., 'e2' represents pawn at e2.\n");
+    printf("7. Please ensure to only include lowercase alphabets.\n");
+    printf("\n\nPress enter key to start playing.\n");
+
+    getch();
+    return 0;
+}
+
 int main()
 {
     SetConsoleOutputCP(CP_UTF8);
@@ -844,6 +872,8 @@ int main()
         w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook
     };
 
+    print_rules();
+
     int game_over = 0;
     int check_w = 0; 
     int check_b = 0;
@@ -851,6 +881,10 @@ int main()
 
     char player_w[10];
     char player_b[10];
+
+    char* previous_move_1;
+    char* previous_move_2;
+    int previous_move = 0;
     CheckResult check_result;
     check_result.colour = 0;
 
@@ -877,10 +911,27 @@ int main()
         int valid_move = 0;
 
         print_board(board);
+        printf("White: %s\nBlack: %s\n\n", player_w, player_b);
+        if (previous_move) {
+            char piece_type[10];
+            int piece_coords[2];
+            convert_input_to_coordinates(previous_move_2, piece_coords);
+            find_piece_type(board[(piece_coords[0] * 8) + piece_coords[1]], piece_type);
+            printf("\n\nPrevious move: %s moved %s from %s to %s\n\n", (current_player ? player_b : player_w), piece_type, previous_move_1, previous_move_2);
+        }
+
         if (check_w) {
-            printf("\n\n%s is under check. (King - {%d, %d}, Piece - {%d, %d})\n\n", player_w, check_result.king_under_check[0], check_result.king_under_check[1], check_result.piece[0], check_result.piece[1]);
+            char king_pos[3];
+            char piece_pos[3];
+            convert_coords_to_input(check_result.king_under_check, king_pos);
+            convert_coords_to_input(check_result.piece, piece_pos);
+            printf("%s is under check. (King - %s, Piece - %s)\n\n", player_w, king_pos, piece_pos);
         } else if (check_b) {
-            printf("\n\n%s is under check. (King - {%d, %d}, Piece - {%d, %d})\n\n", player_b, check_result.king_under_check[0], check_result.king_under_check[1], check_result.piece[0], check_result.piece[1]);
+            char king_pos[3];
+            char piece_pos[3];
+            convert_coords_to_input(check_result.king_under_check, king_pos);
+            convert_coords_to_input(check_result.piece, piece_pos);
+            printf("%s is under check. (King - %s, Piece - %s)\n\n", player_b, king_pos, piece_pos);
         }
 
         if (current_player == 0) {
@@ -935,6 +986,9 @@ int main()
             if (!valid_move) {
                 printf("Can not move %s to %s. Try again.\n", trimmed_1, trimmed_2);
             } else {
+                previous_move_1 = &trimmed_1;
+                previous_move_2 = &trimmed_2;
+                previous_move = 1;
                 current_player = (current_player + 1) % 2;
             }
         }
