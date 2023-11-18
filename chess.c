@@ -626,7 +626,8 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
 
         if ((piece[0] + 2) < 8) {
             if ((piece[1] + 1) < 8) {
-                if (is_white(board[((piece[0] + 2) * 8) + piece[1] + 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                if ((*(board[((piece[0] + 2) * 8) + piece[1] + 1]) == ' ') || (is_white(board[((piece[0] + 2) * 8) + piece[1] + 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])))
+                {
                     positions[positions_count][0] = piece[0] + 2;
                     positions[positions_count][1] = piece[1] + 1;
                     positions_count++;
@@ -634,7 +635,8 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             }
 
             if ((piece[1] - 1) >= 0) {
-                if (is_white(board[((piece[0] + 2) * 8) + piece[1] - 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                if ((*(board[((piece[0] + 2) * 8) + piece[1] - 1]) == ' ') || (is_white(board[((piece[0] + 2) * 8) + piece[1] - 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])))
+                {
                     positions[positions_count][0] = piece[0] + 2;
                     positions[positions_count][1] = piece[1] - 1;
                     positions_count++;
@@ -644,7 +646,8 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
 
         if ((piece[0] - 2) >= 0) {
             if ((piece[1] + 1) < 8) {
-                if (is_white(board[((piece[0] - 2) * 8) + piece[1] + 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                if ((*(board[((piece[0] - 2) * 8) + piece[1] + 1]) == ' ') || (is_white(board[((piece[0] - 2) * 8) + piece[1] + 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])))
+                {
                     positions[positions_count][0] = piece[0] - 2;
                     positions[positions_count][1] = piece[1] + 1;
                     positions_count++;
@@ -652,13 +655,56 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             }
 
             if ((piece[1] - 1) >= 0) {
-                if (is_white(board[((piece[0] - 2) * 8) + piece[1] - 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                if ((*(board[((piece[0] - 2) * 8) + piece[1] - 1]) == ' ') || (is_white(board[((piece[0] - 2) * 8) + piece[1] - 1]) ^ is_white(board[(piece[0] * 8) + piece[1]])))
+                {
                     positions[positions_count][0] = piece[0] - 2;
                     positions[positions_count][1] = piece[1] - 1;
                     positions_count++;
                 }
             }
         }
+
+        if ((piece[1] + 2) < 8) {
+            if ((piece[0] + 1) < 8) {
+                if ((*(board[((piece[0] + 1) * 8) + piece[1] + 2]) == ' ') || (is_white(board[((piece[0] + 1) * 8) + piece[1] + 2]) ^ is_white(board[(piece[0] * 8) + piece[1]]))) 
+                {
+                    positions[positions_count][0] = piece[0] + 1;
+                    positions[positions_count][1] = piece[1] + 2;
+                    positions_count++;
+                }
+            }
+
+            if ((piece[0] - 1) >= 0) {
+                if ((*(board[((piece[0] - 1) * 8) + piece[1] + 2]) == ' ') || (is_white(board[((piece[0] - 1) * 8) + piece[1] + 2]) ^ is_white(board[(piece[0] * 8) + piece[1]])))
+                {
+                    positions[positions_count][0] = piece[0] - 1;
+                    positions[positions_count][1] = piece[1] + 2;
+                    positions_count++;
+                }
+            }
+        }
+
+        if ((piece[1] - 2) >= 0) {
+            if ((piece[0] + 1) < 8) {
+                if ((*(board[((piece[0] + 1) * 8) + piece[1] - 2]) == ' ') || (is_white(board[((piece[0] + 1) * 8) + piece[1] - 2]) ^ is_white(board[(piece[0] * 8) + piece[1]]))) 
+                {
+                    positions[positions_count][0] = piece[0] + 1;
+                    positions[positions_count][1] = piece[1] - 2;
+                    positions_count++;
+                }
+            }
+
+            if ((piece[0] - 1) >= 0) {
+                if ((*(board[((piece[0] - 1) * 8) + piece[1] - 2]) == ' ') || (is_white(board[((piece[0] - 1) * 8) + piece[1] - 2]) ^ is_white(board[(piece[0] * 8) + piece[1]])))
+                {
+                    positions[positions_count][0] = piece[0] - 1;
+                    positions[positions_count][1] = piece[1] - 2;
+                    positions_count++;
+                }
+            }
+        }
+
+
 
         positions[positions_count][0] = -1;
         positions[positions_count][1] = -1;
