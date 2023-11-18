@@ -320,7 +320,8 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
                 positions[positions_count][1] = piece[1] + i;
                 positions_count++;
             } else {
-                if (is_white(board[(piece[0] * 8) + piece[1] + i]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                if (is_white(board[(piece[0] * 8) + piece[1] + i]) ^ is_white(board[(piece[0] * 8) + piece[1]]))
+                {
                     positions[positions_count][0] = piece[0];
                     positions[positions_count][1] = piece[1] + i;
                     positions_count++;
