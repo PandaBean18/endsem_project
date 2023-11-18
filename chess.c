@@ -770,9 +770,8 @@ int move_piece(char* board[64], int initial_pos[2], int final_pos[2])
 
     for (int i = 0; possible_moves[i][0] != -1; i++) {
         if ((possible_moves[i][0] == final_pos[0]) && (possible_moves[i][1] == final_pos[1])) {
-            char *temp = board[(initial_pos[0] * 8) + initial_pos[1]];
-            board[(initial_pos[0] * 8) + initial_pos[1]] = board[(final_pos[0] * 8) + final_pos[1]];
-            board[(final_pos[0] * 8) + final_pos[1]] = temp;
+            board[(final_pos[0] * 8) + final_pos[1]] = board[(initial_pos[0] * 8) + initial_pos[1]];
+            board[(initial_pos[0] * 8) + initial_pos[1]] = " \0";
             return 1;
         } 
     }
@@ -893,7 +892,6 @@ int main()
         while (!valid_move) {
             fflush(stdin);
             printf("Please enter the position of the piece you wish to move: ");
-
             gets(&inp_1);
 
             int input_valid = valid_input(inp_1);
@@ -924,7 +922,15 @@ int main()
             convert_input_to_coordinates(trimmed_1, coords_initial);
             convert_input_to_coordinates(trimmed_2, coords_final);
 
-            valid_move = move_piece(board, coords_initial, coords_final);
+            if (is_white(board[(coords_initial[0] * 8) + coords_initial[1]]) ^ current_player) {
+                printf("\nPlease pick a %s coloured piece.\n", (current_player ? "white\0" : "black\0"));
+                continue;
+            } else if (*(board[(coords_initial[0] * 8) + coords_initial[1]]) == ' ') {
+                printf("\nNo piece at %s.\n", trimmed_1);
+                continue;
+            }
+
+            valid_move = move_piece(board, coords_initial, coords_final); 
 
             if (!valid_move) {
                 printf("Can not move %s to %s. Try again.\n", trimmed_1, trimmed_2);
