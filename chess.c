@@ -608,9 +608,6 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
 
         positions[positions_count][0] = -1;
         positions[positions_count][1] = -1;
-        for(int i = 0; positions[i][0] != -1; i++) {
-            printf("{%d, %d}\n", positions[i][0], positions[i][1]);
-        }
         return positions;
     } else if (check_string_equality(piece_type, "w_knight") || check_string_equality(piece_type, "b_knight")) {
         int positions_count = 0;
@@ -761,7 +758,7 @@ CheckResult king_in_check(char* board[64], CheckResult result) // return 0 -> no
             }
         }
     }
-
+    printf("a");
     result.colour = 0;
     return result;
 }
@@ -856,6 +853,7 @@ int main()
     char player_w[10];
     char player_b[10];
     CheckResult check_result;
+    check_result.colour = 0;
 
     fflush(stdin);
 
@@ -935,11 +933,12 @@ int main()
             }
         }
 
-        king_in_check(board, check_result);
+        check_result = king_in_check(board, check_result);
         int check = check_result.colour;
-        printf("%d\n", check);
+
         if (check == 1) {
             if (check_w == 1) {
+                print_board(board);
                 printf("White is under checkmate. %s wins\n\n", player_b);
                 game_over = 1;
             } else {
@@ -947,6 +946,7 @@ int main()
             }
         } else if (check == 2) {
             if (check_b == 1) {
+                print_board(board);
                 printf("Black is under checkmate. %s wins\n\n", player_w);
                 game_over = 1;
             } else {
