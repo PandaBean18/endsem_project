@@ -2,6 +2,12 @@
 #include <stdio.h>
 #include <locale.h>
 
+typedef struct CheckResult {
+    int colour; // 0, 1 or 2
+    int king_under_check[2]; 
+    int piece[2];
+} CheckResult;
+
 int includes(char str[], char c) 
 {
     for(1; *str != '\0'; str++) {
@@ -293,14 +299,14 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
     } else if ((check_string_equality(piece_type, "w_rook")) || (check_string_equality(piece_type, "b_rook"))) {
         int positions_count = 0;
 
-        for(int i = 0; i < 8; i++) {
-            if (*(board[(i * 8) + piece[1]]) == ' ') {
-                positions[positions_count][0] = i; 
+        for(int i = 1; (piece[0] + i) < 8; i++) {
+            if (*(board[((piece[0] + i) * 8) + piece[1]]) == ' ') {
+                positions[positions_count][0] = piece[0] + i;
                 positions[positions_count][1] = piece[1];
                 positions_count++;
             } else {
-                if (is_white(board[(i * 8) + piece[1]]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
-                    positions[positions_count][0] = i;
+                if (is_white(board[((piece[0] + i) * 8) + piece[1]]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                    positions[positions_count][0] = piece[0] + i;
                     positions[positions_count][1] = piece[1];
                     positions_count++;
                 }
@@ -308,15 +314,45 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             }
         }
 
-        for(int i = 0; i < 8; i++) {
-            if (*(board[(piece[0] * 8) + i]) == ' ') {
+        for(int i = 1; (piece[1] + i) < 8; i++) {
+            if (*(board[(piece[0] * 8) + piece[1] + i]) == ' ') {
                 positions[positions_count][0] = piece[0];
-                positions[positions_count][1] = i;
+                positions[positions_count][1] = piece[1] + i;
                 positions_count++;
             } else {
-                if (is_white(board[(piece[0] * 8) + i]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                if (is_white(board[(piece[0] * 8) + piece[1] + i]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
                     positions[positions_count][0] = piece[0];
-                    positions[positions_count][1] = i;
+                    positions[positions_count][1] = piece[1] + i;
+                    positions_count++;
+                }
+                break;
+            }
+        }
+
+        for(int i = 1; (piece[0] - i) >= 0; i++) {
+            if (*(board[((piece[0] - i) * 8) + piece[1]]) == ' ') {
+                positions[positions_count][0] = piece[0] - i;
+                positions[positions_count][1] = piece[1];
+                positions_count++;
+            } else {
+                if (is_white(board[((piece[0] - i) * 8) + piece[1]]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                    positions[positions_count][0] = piece[0] - i;
+                    positions[positions_count][1] = piece[1];
+                    positions_count++;
+                }
+                break;
+            }
+        }
+
+        for(int i = 1; (piece[1] - i) >= 0; i++) {
+            if (*(board[(piece[0] * 8) + piece[1] - i]) == ' ') {
+                positions[positions_count][0] = piece[0];
+                positions[positions_count][1] = piece[1] - i;
+                positions_count++;
+            } else {
+                if (is_white(board[(piece[0] * 8) + piece[1] - i]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                    positions[positions_count][0] = piece[0];
+                    positions[positions_count][1] = piece[1] - i;
                     positions_count++;
                 }
                 break;
@@ -328,7 +364,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
         return positions;
     } else if (check_string_equality(piece_type, "w_bishop") || check_string_equality(piece_type, "b_bishop")) {
         int positions_count = 0;
-        int i = 0;
+        int i = 1;
 
         while (((piece[0] + i) < 8) && (piece[1] + i) < 8) {
             if (*(board[((piece[0] + i) * 8) + piece[1] + i]) == ' ') {
@@ -347,7 +383,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             i++;
         }
 
-        i = 0;
+        i = 1;
 
         while (((piece[0] + i) < 8) && ((piece[1] - i) >= 0)) {
             if (*(board[((piece[0] + i) * 8) + piece[1] - i]) == ' ')
@@ -369,7 +405,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             i++;
         }
 
-        i = 0;
+        i = 1;
 
         while (((piece[0] - i) >= 0) && ((piece[1] - i) >= 0)) {
             if (*(board[((piece[0] - i) * 8) + piece[1] - i]) == ' ')
@@ -392,7 +428,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             i++;
         }
 
-        i = 0;
+        i = 1;
 
         while (((piece[0] - i) >= 0) && ((piece[1] + i) < 8))
         {
@@ -421,14 +457,14 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
     } else if (check_string_equality(piece_type, "w_queen") || check_string_equality(piece_type, "b_queen")) {
         int positions_count = 0;
 
-        for(int i = 0; i < 8; i++) {
-            if (*(board[(i * 8) + piece[1]]) == ' ') {
-                positions[positions_count][0] = i;
+        for(int i = 1; (piece[0] + i) < 8; i++) {
+            if (*(board[((piece[0] + i) * 8) + piece[1]]) == ' ') {
+                positions[positions_count][0] = piece[0] + i;
                 positions[positions_count][1] = piece[1];
                 positions_count++;
             } else {
-                if (is_white(board[(piece[0] * 8) + piece[1]]) ^ is_white(board[(i * 8) + piece[1]])) {
-                    positions[positions_count][0] = i;
+                if (is_white(board[((piece[0] + i) * 8) + piece[1]]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                    positions[positions_count][0] = piece[0] + i;
                     positions[positions_count][1] = piece[1];
                     positions_count++;
                 }
@@ -436,39 +472,61 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             }
         }
 
-        for(int i = 0; i < 8; i++) {
-            if (*(board[(piece[0] * 8) + i]) == ' ')
-            {
+        for(int i = 1; (piece[1] + i) < 8; i++) {
+            if (*(board[(piece[0] * 8) + piece[1] + i]) == ' ') {
                 positions[positions_count][0] = piece[0];
-                positions[positions_count][1] = i;
+                positions[positions_count][1] = piece[1] + i;
                 positions_count++;
-            }
-            else
-            {
-                if (is_white(board[(piece[0] * 8) + piece[1]]) ^ is_white(board[(piece[0] * 8) + i]))
+            } else {
+                if (is_white(board[(piece[0] * 8) + piece[1] + i]) ^ is_white(board[(piece[0] * 8) + piece[1]]))
                 {
                     positions[positions_count][0] = piece[0];
-                    positions[positions_count][1] = i;
+                    positions[positions_count][1] = piece[1] + i;
                     positions_count++;
                 }
                 break;
             }
         }
 
-        int i = 0;
+        for(int i = 1; (piece[0] - i) >= 0; i++) {
+            if (*(board[((piece[0] - i) * 8) + piece[1]]) == ' ') {
+                positions[positions_count][0] = piece[0] - i;
+                positions[positions_count][1] = piece[1];
+                positions_count++;
+            } else {
+                if (is_white(board[((piece[0] - i) * 8) + piece[1]]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                    positions[positions_count][0] = piece[0] - i;
+                    positions[positions_count][1] = piece[1];
+                    positions_count++;
+                }
+                break;
+            }
+        }
 
-        while (((piece[0] + i) < 8) && (piece[1] + i) < 8)
-        {
-            if (*(board[((piece[0] + i) * 8) + piece[1] + i]) == ' ')
-            {
+        for(int i = 1; (piece[1] - i) >= 0; i++) {
+            if (*(board[(piece[0] * 8) + piece[1] - i]) == ' ') {
+                positions[positions_count][0] = piece[0];
+                positions[positions_count][1] = piece[1] - i;
+                positions_count++;
+            } else {
+                if (is_white(board[(piece[0] * 8) + piece[1] - i]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
+                    positions[positions_count][0] = piece[0];
+                    positions[positions_count][1] = piece[1] - i;
+                    positions_count++;
+                }
+                break;
+            }
+        }
+
+        int i = 1;
+
+        while (((piece[0] + i) < 8) && (piece[1] + i) < 8) {
+            if (*(board[((piece[0] + i) * 8) + piece[1] + i]) == ' ') {
                 positions[positions_count][0] = piece[0] + i;
                 positions[positions_count][1] = piece[1] + i;
                 positions_count++;
-            }
-            else
-            {
-                if (is_white(board[((piece[0] + i) * 8) + piece[1] + i]) ^ is_white(board[(piece[0] * 8) + piece[1]]))
-                {
+            } else {
+                if (is_white(board[((piece[0] + i) * 8) + piece[1] + i]) ^ is_white(board[(piece[0] * 8) + piece[1]])) {
                     positions[positions_count][0] = piece[0] + i;
                     positions[positions_count][1] = piece[1] + i;
                     positions_count++;
@@ -479,10 +537,9 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             i++;
         }
 
-        i = 0;
+        i = 1;
 
-        while (((piece[0] + i) < 8) && ((piece[1] - i) >= 0))
-        {
+        while (((piece[0] + i) < 8) && ((piece[1] - i) >= 0)) {
             if (*(board[((piece[0] + i) * 8) + piece[1] - i]) == ' ')
             {
                 positions[positions_count][0] = piece[0] + i;
@@ -502,10 +559,9 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             i++;
         }
 
-        i = 0;
+        i = 1;
 
-        while (((piece[0] - i) >= 0) && ((piece[1] - i) >= 0))
-        {
+        while (((piece[0] - i) >= 0) && ((piece[1] - i) >= 0)) {
             if (*(board[((piece[0] - i) * 8) + piece[1] - i]) == ' ')
             {
                 positions[positions_count][0] = piece[0] - i;
@@ -526,7 +582,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
             i++;
         }
 
-        i = 0;
+        i = 1;
 
         while (((piece[0] - i) >= 0) && ((piece[1] + i) < 8))
         {
@@ -551,6 +607,9 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
 
         positions[positions_count][0] = -1;
         positions[positions_count][1] = -1;
+        for(int i = 0; positions[i][0] != -1; i++) {
+            printf("{%d, %d}\n", positions[i][0], positions[i][1]);
+        }
         return positions;
     } else if (check_string_equality(piece_type, "w_knight") || check_string_equality(piece_type, "b_knight")) {
         int positions_count = 0;
@@ -668,7 +727,7 @@ int** find_possible_moves(char* board[64], int piece_ptr[], int* positions[63][2
     }
 }
 
-int king_in_check(char* board[64]) // return 0 -> no king in check
+CheckResult king_in_check(char* board[64], CheckResult result) // return 0 -> no king in check
 {                                  // return 1 -> white in check
     char b_king[] = "\u265A";      // return 2 -> black in check
     char w_king[] = "\u2654";
@@ -682,17 +741,28 @@ int king_in_check(char* board[64]) // return 0 -> no king in check
                 find_possible_moves(board, piece, positions);
                 for(int k = 0; positions[k][0] != -1; k++) {
                     if (check_string_equality(board[(positions[k][0] * 8) + positions[k][1]], w_king)) {
-                        return 1;
+                        result.colour = 1;
+                        result.king_under_check[0] = positions[k][0];
+                        result.king_under_check[1] = positions[k][1];
+                        result.piece[0] = piece[0];
+                        result.piece[1] = piece[1];
+                        return result;
                     }
                     else if (check_string_equality(board[(positions[k][0] * 8) + positions[k][1]], b_king)) {
-                        return 2;
+                        result.colour = 2;
+                        result.king_under_check[0] = positions[k][0];
+                        result.king_under_check[1] = positions[k][1];
+                        result.piece[0] = piece[0];
+                        result.piece[1] = piece[1];
+                        return result;
                     }
                 }
             }
         }
     }
 
-    return 0;
+    result.colour = 0;
+    return result;
 }
 
 int move_piece(char* board[64], int initial_pos[2], int final_pos[2]) 
@@ -777,37 +847,115 @@ int main()
         w_rook, w_knight, w_bishop, w_queen, w_king, w_bishop, w_knight, w_rook
     };
 
-    char inp_1[3];
-    char inp_2[3];
-    char inp_3[3];
+    int game_over = 0;
+    int check_w = 0; 
+    int check_b = 0;
+    int current_player = 1; // 0 for black 1 for white
 
-    int coords_1[2];
-    int coords_2[2];
-    int coords_3[2];
+    char player_w[10];
+    char player_b[10];
+    CheckResult check_result;
 
-    print_board(board);
+    fflush(stdin);
 
-    // fflush(stdin);
-    // printf("inp_1: ");
-    // gets(&inp_1);
+    printf("Please enter the name of the first player (white): ");
+    gets(&player_w);
 
-    // fflush(stdin);
-    // printf("inp_2: ");
-    // gets(&inp_2);
+    fflush(stdin); 
 
-    // fflush(stdin);
-    // printf("inp_3: ");
-    // gets(&inp_3);
+    printf("Please enter the name of the second player (black): ");
+    gets(&player_b);
 
-    // convert_input_to_coordinates(inp_1, coords_1);
-    // convert_input_to_coordinates(inp_2, coords_2);
-    // convert_input_to_coordinates(inp_3, coords_3);
+    printf("White moves first!\n\n");
 
-    // move_piece(board, coords_1, coords_2);
-    // move_piece(board, coords_3, coords_2);
+    while (!game_over) {
+        char inp_1[10];
+        char inp_2[10];
+        char trimmed_1[3];
+        char trimmed_2[3];
 
-    // print_board(board);
-    printf("%d", king_in_check(board));
+        int coords_initial[2];
+        int coords_final[2];
+        int valid_move = 0;
+
+        print_board(board);
+        if (check_w) {
+            printf("\n\n%s is under check. (King - {%d, %d}, Piece - {%d, %d})\n\n", player_w, check_result.king_under_check[0], check_result.king_under_check[1], check_result.piece[0], check_result.piece[1]);
+        } else if (check_b) {
+            printf("\n\n%s is under check. (King - {%d, %d}, Piece - {%d, %d})\n\n", player_b, check_result.king_under_check[0], check_result.king_under_check[1], check_result.piece[0], check_result.piece[1]);
+        }
+
+        if (current_player == 0) {
+            printf("It is %s's turn.\n\n", player_b);
+        } else {
+            printf("It is %s's turn.\n\n", player_w);
+        }
+
+        while (!valid_move) {
+            fflush(stdin);
+            printf("Please enter the position of the piece you wish to move: ");
+
+            gets(&inp_1);
+
+            int input_valid = valid_input(inp_1);
+
+            while (!input_valid) {
+                fflush(stdin);
+                printf("Input is not valid, please try again: ");
+                gets(&inp_1);
+                input_valid = valid_input(inp_1);
+            }
+
+            fflush(stdin);
+            printf("Please enter the position to which you want to move to: ");
+            gets(&inp_2);
+
+            input_valid = valid_input(inp_2);
+
+            while (!input_valid) {
+                fflush(stdin);
+                printf("Input is not valid, please try again: ");
+                gets(&inp_2);
+                input_valid = valid_input(inp_2);
+            }
+
+            turnicate_whitespace(inp_1, trimmed_1);
+            turnicate_whitespace(inp_2, trimmed_2);
+
+            convert_input_to_coordinates(trimmed_1, coords_initial);
+            convert_input_to_coordinates(trimmed_2, coords_final);
+
+            valid_move = move_piece(board, coords_initial, coords_final);
+
+            if (!valid_move) {
+                printf("Can not move %s to %s. Try again.\n", trimmed_1, trimmed_2);
+            } else {
+                current_player = (current_player + 1) % 2;
+            }
+        }
+
+        king_in_check(board, check_result);
+        int check = check_result.colour;
+        printf("%d\n", check);
+        if (check == 1) {
+            if (check_w == 1) {
+                printf("White is under checkmate. %s wins\n\n", player_b);
+                game_over = 1;
+            } else {
+                check_w = 1;
+            }
+        } else if (check == 2) {
+            if (check_b == 1) {
+                printf("Black is under checkmate. %s wins\n\n", player_w);
+                game_over = 1;
+            } else {
+                check_b = 1;
+            }
+        } else {
+            check_b = 0;
+            check_w = 0;
+        }
+    }
 
     return 0;
 }
