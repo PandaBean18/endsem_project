@@ -120,3 +120,17 @@ ___
 
 Does the opposite of what the above function does.
 
+___
+## is_white
+### return type -> int
+### parameters -> string str
+
+Checks `str` against an array of strings which we know are white pieces. Returns 1 if str matches any of the strings in `whites` array, else it returns 0. 
+
+___
+## find_piece_type
+### return type -> char* 
+### parameters -> char* piece, char* type
+
+Checks the value stored at `piece` against an array of unicode values. The index, `i`, where the value matches is stored. `piece_names[i]` gives the pointer to the string that corresponds to the name of `piece`. Each value of `piece_name[i]` is then assigned to `type`.
+
