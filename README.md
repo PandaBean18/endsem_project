@@ -67,4 +67,53 @@ The function checks if a string (str) contains a character (c). It does this by 
 
 Here 1 and 0 act as True and False.
 
-##
+## check_string_equality
+### return type -> integer
+### parameters -> string str_1, string str_2
+
+This function matches each character of the first string with the second string. Incase the characters do not match, the function returns 0 (representing false). If all the characters match and the for loop is exited successfully, it returns 1 (representing true).
+
+
+## valid_input
+### return type -> integer
+### parameters -> string str
+
+The input coordinates that are inputted by the user are in the format `<alphabet representing the column>` `<number representing the row>` example: e2. This function ensures that this input is correct. Parameters for being correct:
+
+1. Alphabetic part is from 'a' to 'h'.
+2. Numeric part is from '1' to '8'.
+3. There should only be one alphabetic character and only one numeric character.
+4. Only other characters permissible other than these are whitespace (' ').
+
+## turnicate_whitespace
+### return type -> char* (pointer to a character)
+### parameters -> string inp, string trimmed_inp -> trimmed_inp is what gets returned by the function
+
+The function iterates over the `inp` string and:
+    1. If a character is encountered, assigns trimmed_inp[0] that character
+    2. If a number is encountered, assigns trimmed_inp[1] that numeric character
+    3. After the iteration is complete, it assigns '\0' to trimmed_inp[2]
+    4. Returns `trimmed_inp`.
+
+This function expects a valid input so the input must be first run through `valid_input` function to ensure the input is valid.
+
+## convert_input_to_coordinates
+### return type -> int*
+### parameters -> string inp, integer array coords -> this is what is returned by the function.
+
+The zeroth element of the `coords` array represents the row, and first represents the column. However, the zeroth element of `inp` string represents the column and first represents the row. 
+
+Also, the numeric part of inp is reversed on the board (it goes from 8 on top to 1 on bottom)
+
+To get the row value, we take the numeric value of inp and subtract it from 8.
+
+Note: we have done 8 - (*inp - 48), This is because:
+    *inp gives a character whose value can be from '1' to '8' but we wish to have an integer value. Unicode for '1' is 49, subtracting 48 from '1' we get 1, so we have convereted '1' to 1 (character 1 to integer 1).
+    Similar logic is used to convert 'a' to 0.
+
+## convert_coords_to_input
+### return type -> char*
+### parameters -> integer array coords, string inp
+
+Does the opposite of what the above function does.
+
