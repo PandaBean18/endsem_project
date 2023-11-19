@@ -66,14 +66,14 @@ ___
 The function checks if a string (str) contains a character (c). It does this by running a for loop which starts at the first character of string and till null character ('\0') is encountered. The null character is the last character in a string. The parameter str is actually a pointer to the first character of the string, so to move to the next character, we increment the pointer (str++). If at any point in the loop, the value at pointer (\*str) is equal to the character (c), we return 1, indicating that the string (str) **includes** the character (c). If none of the characters of the string match the character (c), the for loop ends. Since the character was not found in the string, we return 0. 
 
 Here 1 and 0 act as True and False.
-
+___
 ## check_string_equality
 ### return type -> integer
 ### parameters -> string str_1, string str_2
 
 This function matches each character of the first string with the second string. Incase the characters do not match, the function returns 0 (representing false). If all the characters match and the for loop is exited successfully, it returns 1 (representing true).
 
-
+___
 ## valid_input
 ### return type -> integer
 ### parameters -> string str
@@ -85,6 +85,7 @@ The input coordinates that are inputted by the user are in the format `<alphabet
 3. There should only be one alphabetic character and only one numeric character.
 4. Only other characters permissible other than these are whitespace (' ').
 
+___
 ## turnicate_whitespace
 ### return type -> char* (pointer to a character)
 ### parameters -> string inp, string trimmed_inp -> trimmed_inp is what gets returned by the function
@@ -97,6 +98,7 @@ The function iterates over the `inp` string and:
 
 This function expects a valid input so the input must be first run through `valid_input` function to ensure the input is valid.
 
+___
 ## convert_input_to_coordinates
 ### return type -> int*
 ### parameters -> string inp, integer array coords -> this is what is returned by the function.
@@ -111,6 +113,7 @@ Note: we have done 8 - (*inp - 48), This is because:
     *inp gives a character whose value can be from '1' to '8' but we wish to have an integer value. Unicode for '1' is 49, subtracting 48 from '1' we get 1, so we have convereted '1' to 1 (character 1 to integer 1).
     Similar logic is used to convert 'a' to 0.
 
+___
 ## convert_coords_to_input
 ### return type -> char*
 ### parameters -> integer array coords, string inp
